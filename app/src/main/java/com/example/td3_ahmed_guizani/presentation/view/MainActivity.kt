@@ -1,74 +1,57 @@
-package com.example.td3_ahmed_guizani.presentation.view;
+package com.example.td3_ahmed_guizani.presentation.view
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.widget.Toast;
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.td3_ahmed_guizani.R
+import com.example.td3_ahmed_guizani.Single
+import com.example.td3_ahmed_guizani.presentation.controller.MainController
+import com.example.td3_ahmed_guizani.presentation.model.Pokemon
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.td3_ahmed_guizani.R;
-import com.example.td3_ahmed_guizani.Singletons;
-import com.example.td3_ahmed_guizani.presentation.controller.MainController;
-import com.example.td3_ahmed_guizani.presentation.model.Pokemon;
-
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity {
-
-
-
-    private RecyclerView recyclerView;
-    private ListAdapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
-
-    private MainController controller;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        controller = new MainController(
-                this,
-                Singletons.getGson(),
-                Singletons.getSharedPreferencesInstance(getApplicationContext())
-        );
-        controller.onStart();
-    }
-
-
-
-    public void showList(List<Pokemon> pokemonList) {
-        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
-
-        mAdapter = new ListAdapter(pokemonList, getApplicationContext(), new ListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Pokemon item) {
-                controller.onItemClick(item);
-
+class MainActivity : AppCompatActivity() {
+    private var recyclerView: RecyclerView? = null
+    private var mAdapter: ListAdapter? = null
+    private var layoutManager: RecyclerView.LayoutManager? = null
+    private var controller: MainController? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        controller = Single.gson?.let {
+            Single.getSharedPreferencesInstance(applicationContext)?.let { it1 ->
+                MainController(
+                    this,
+                        it,
+                        it1
+            )
             }
-        });
-        recyclerView.setAdapter(mAdapter);
+        }
+        controller!!.onStart()
     }
 
-
-
-
-
-    public void showError() {
-        Toast.makeText(getApplicationContext(), "Api Error", Toast.LENGTH_SHORT).show();
+    fun showList(pokemonList: List<Pokemon?>?) {
+        recyclerView = findViewById<View>(R.id.recycler_view) as RecyclerView
+        recyclerView!!.setHasFixedSize(true)
+        layoutManager = LinearLayoutManager(this)
+        recyclerView!!.layoutManager = layoutManager
+        mAdapter = ListAdapter(pokemonList as List<Pokemon>, applicationContext, object : ListAdapter.OnItemClickListener {
+            override fun onItemClick(item: Pokemon?) {
+                controller!!.onItemClick(item)
+            }
+        })
+        recyclerView!!.adapter = mAdapter
     }
 
+    fun showError() {
+        Toast.makeText(applicationContext, "Api Error", Toast.LENGTH_SHORT).show()
+    }
 
-    public void navigateToDetails(Pokemon pokemon) {
-        Intent myIntent = new Intent(MainActivity.this, DetailActivity.class);
-        myIntent.putExtra("pokemonKey", Singletons.getGson().toJson(pokemon));
-        MainActivity.this.startActivity(myIntent);
+    fun navigateToDetails(pokemon: Pokemon?) {
+        val myIntent = Intent(this@MainActivity, DetailActivity::class.java)
+        myIntent.putExtra("pokemonKey", Single.gson?.toJson(pokemon))
+        this@MainActivity.startActivity(myIntent)
     }
 }

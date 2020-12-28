@@ -1,31 +1,22 @@
-package com.example.td3_ahmed_guizani.presentation.view;
+package com.example.td3_ahmed_guizani.presentation.view
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
+import android.content.Intent
+import android.os.Bundle
+import android.os.Handler
+import androidx.appcompat.app.AppCompatActivity
+import com.example.td3_ahmed_guizani.R
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.td3_ahmed_guizani.R;
-
-public class SplashScreenActivity extends AppCompatActivity {
-
-    private final int SPLASH8SCREEN8TIMEOUT = 5000;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash_screen);
+class SplashScreenActivity : AppCompatActivity() {
+    private val SPLASH8SCREEN8TIMEOUT = 5000
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_splash_screen)
 
         //rediriger vers la liste des pokemon apres 5 secondes
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // passer a la fragment de list des pokemon
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }, SPLASH8SCREEN8TIMEOUT);
-
+        Handler().postDelayed({ // passer a la fragment de list des pokemon
+            val intent = Intent(applicationContext, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }, SPLASH8SCREEN8TIMEOUT.toLong())
     }
 }
