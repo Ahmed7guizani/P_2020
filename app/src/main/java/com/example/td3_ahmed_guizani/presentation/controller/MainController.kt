@@ -13,7 +13,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainController(private val view: MainActivity, private val gson: Gson, private val sharedPreferences: SharedPreferences) {
+class MainController(private val view: MainActivity, private val gson: Gson?, private val sharedPreferences: SharedPreferences) {
     fun onStart() {
         val pokemonList = dataFromCache
         if (pokemonList != null) {
@@ -24,12 +24,12 @@ class MainController(private val view: MainActivity, private val gson: Gson, pri
     }
 
     private fun makeApiCall() {
-        Log.d("ahmd", "before Callback: ")
+        Log.d("ahmed", "before Callback: ")
         val call = Single.pokeApi?.pokemonResponse
         if (call != null) {
             call.enqueue(object : Callback<RestPokemonResponse?> {
                 override fun onResponse(call: Call<RestPokemonResponse?>, response: Response<RestPokemonResponse?>) {
-                    Log.d("ahmd", "inside Callback ")
+                    Log.d("ahmed", "inside Callback ")
                     if (response.isSuccessful && response.body() != null) {
                         val pokemonList = response.body()!!.pokemon
                         pokemonList?.let { saveList(it) }
@@ -44,11 +44,11 @@ class MainController(private val view: MainActivity, private val gson: Gson, pri
                 }
             })
         }
-        Log.d("ahmd", "After Callback: ")
+        Log.d("ahmed", "After Callback: ")
     }
 
     private fun saveList(pokemonList: List<Pokemon>) {
-        val jsonString = gson.toJson(pokemonList)
+        val jsonString = gson?.toJson(pokemonList)
         sharedPreferences
                 .edit()
                 .putString(Constants.KEY_POKEMON_LIST, "jsonString")
@@ -61,15 +61,14 @@ class MainController(private val view: MainActivity, private val gson: Gson, pri
             return if (jsonPokemon == null) {
                 null
             } else {
-                val listType = object : TypeToken<List<Pokemon?>?>() {}.type
-                gson.fromJson(jsonPokemon, listType)
+                val listType = object : TypeToken<List<Pokemon>>() {}.type
+                gson?.fromJson(jsonPokemon, listType)
             }
         }
 
-    fun onItemClick(pokemon: Pokemon?) {
+    fun onItemClick(pokemon: Pokemon) {
         view.navigateToDetails(pokemon)
     }
 
-    fun onButtonAClick() {}
-    fun onButtonBClick() {}
+
 }

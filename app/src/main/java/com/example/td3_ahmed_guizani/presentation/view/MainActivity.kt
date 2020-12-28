@@ -20,8 +20,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        controller = Single.gson?.let {
-            Single.getSharedPreferencesInstance(applicationContext)?.let { it1 ->
+        controller = Single.gson.let { Single.getSharedPreferencesInstance(applicationContext)?.let { it1 ->
                 MainController(
                     this,
                         it,
@@ -39,7 +38,9 @@ class MainActivity : AppCompatActivity() {
         recyclerView!!.layoutManager = layoutManager
         mAdapter = ListAdapter(pokemonList as List<Pokemon>, applicationContext, object : ListAdapter.OnItemClickListener {
             override fun onItemClick(item: Pokemon?) {
-                controller!!.onItemClick(item)
+                if (item != null) {
+                    controller!!.onItemClick(item)
+                }
             }
         })
         recyclerView!!.adapter = mAdapter
@@ -49,9 +50,9 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(applicationContext, "Api Error", Toast.LENGTH_SHORT).show()
     }
 
-    fun navigateToDetails(pokemon: Pokemon?) {
+    fun navigateToDetails(pokemon: Pokemon) {
         val myIntent = Intent(this@MainActivity, DetailActivity::class.java)
-        myIntent.putExtra("pokemonKey", Single.gson?.toJson(pokemon))
+        myIntent.putExtra("pokemonKey", Single.gson!!.toJson(pokemon))
         this@MainActivity.startActivity(myIntent)
     }
 }
