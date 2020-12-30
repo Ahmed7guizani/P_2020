@@ -1,6 +1,6 @@
 # Ahmed_Guizani
 
-First Android project with JAVA
+First Android project with KOTLIN
 
 ## Application Pokémon
 
